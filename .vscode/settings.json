@@ -1,5 +1,7 @@
 {
     "python.analysis.extraPaths": [
         "./source_code"
-    ]
+    ],
+    "python.analysis.typeCheckingMode": "basic",
+    "python.analysis.autoImportCompletions": true
 }
