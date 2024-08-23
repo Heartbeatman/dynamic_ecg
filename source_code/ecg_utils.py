@@ -3,6 +3,10 @@ from scipy import signal as si
 import time as time
 from signal_utils import butter_highpass_filter, standardise
 
+
+
+
+
 def timer_decorator(func):
     def wrapper(*args, **kwargs):
         start_time = time.time()
@@ -17,27 +21,29 @@ def timer_decorator(func):
 
 
 @timer_decorator
-def peak(X,TH)->np.ndarray:
+def peak(signal:np.ndarray, threshold:float) -> np.ndarray:
     """
-    
     Function to find the peaks of a signal
-    args:
-        X: the signal
-        TH: the threshold
-    returns:
-        F_in: the peaks of the signal
-
+    Args:
+        signal (np.ndarray): The signal
+        threshold (float): The threshold for peak detection
+    Returns:
+        np.ndarray: The peaks of the signal
     """
-    ## Calibrate the signal by pinning a 1 to the start and end of the signal
-    X = np.concatenate((np.ones(1),X,np.ones(1)))
-    T = np.flatnonzero(X > TH)
-    dT = np.diff(T) - 1
-    edges = np.flatnonzero(dT) + 1
-    W = np.column_stack((edges[:-1],edges[1:]))
-    WE = np.rint(0.5*(W[:,0]+W[:,1])).astype(int)
-    F_in = np.column_stack((T[WE],(np.diff(W)[:,0])))
+    # Calibrate the signal by pinning a 1 to the start and end of the signal
+    signal = np.concatenate((np.ones(1), signal, np.ones(1)))
+    
+    indices = np.flatnonzero(signal > threshold)
 
-    return F_in
+    differences = np.diff(indices) - 1
+    
+    edges = np.flatnonzero(differences) + 1
+    
+    window_centers = np.rint(0.5 * (edges[:, 0] + edges[:, 1])).astype(int)
+    
+    peaks = np.column_stack((indices[window_centers], np.diff(edges)[:, 0]))
+    
+    return peaks
 
 @timer_decorator
 def grad_sqaure_conv(X, freq=125, sin_wave=False) -> np.ndarray:
@@ -74,7 +80,7 @@ def grad_sqaure_conv(X, freq=125, sin_wave=False) -> np.ndarray:
     return window
 
 
-def phasor_transform(lead,rv)->np.array:
+def phasor_transform(lead,rv)->np.ndarray:
     """
     This function performs the phasor transform on the lead.
     lead: the lead to analyze (numpy array)
@@ -98,10 +104,9 @@ def phrt(lead,th)->np.ndarray:
 
     phi_atrial  = np.arctan((lead)/(th)) +(np.pi)/2
 
-    phi_t = peak(X=phi_atrial,TH=th)
+    phi_t = peak(signal=phi_atrial,threshold=th)
+
     return phi_t
-
-
 
 
 
@@ -121,6 +126,7 @@ def P_wave(Z,th):
 
 
 def PR(Z,Y):
+    
 
     H = P_wave(Z,0.30)
 
