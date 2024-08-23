@@ -1,3 +1,5 @@
+############################################
+## Author: Kevin Dejbod            ########
 from dataclasses import dataclass
 from pyedflib import highlevel
 import ecg_utils as ecg
@@ -74,7 +76,7 @@ class ecg_lead:
         """
         Function to detect the R peaks of a signal
         args:
-            X: the signal
+            signal: the signal
             freq: the frequency of the signal
             threshold: the threshold for the peak detector
         returns:
@@ -85,7 +87,7 @@ class ecg_lead:
         ## calculate the threshold
         self.threshold = self.threshold_calc(self.window)
         ## perform the peak detection on this transformed signal
-        self.r_peaks = ecg.peak(X=self.window, TH=self.threshold)
+        self.r_peaks = ecg.peak(signal=self.window, threshold=self.threshold, fs=self.fs)
         ## we filter by width to ensure we only get the R peaks
         
 
@@ -102,7 +104,7 @@ class ecg_lead:
         """
         Function to detect the P peaks of a signal
         args:
-            X: the signal
+            signal: the signal
             freq: the frequency of the signal
             threshold: the threshold for the peak detector
         returns:
@@ -113,7 +115,7 @@ class ecg_lead:
         ## calculate the threshold
         self.threshold = self.threshold_calc(self.phasor)
         ## perform the peak detection on this transformed signal
-        self.p_peaks = ecg.peak(X=self.phasor, TH=self.threshold)
+        self.p_peaks = ecg.peak(signal=self.phasor, threshold=self.threshold)
 
     def r_plot(self):
         '''
@@ -136,6 +138,9 @@ class ecg_lead:
 
 @dataclass
 class ecg_data:
+    '''
+    ecg_data class to read ECG data from an EDF file, holding all the ecg leads and common beats.
+    '''
     file_path: str
     fs: int = None
     U: str = None
