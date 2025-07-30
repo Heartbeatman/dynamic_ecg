@@ -1,11 +1,12 @@
 """Wave detection algorithms."""
 import numpy as np
 import time
+from typing import Callable, Any
 
 
-def timer_decorator(func):
+def timer_decorator(func: Callable[..., Any]) -> Callable[..., Any]:
     """Decorator to time function execution."""
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
         start_time = time.time()
         result = func(*args, **kwargs)
         end_time = time.time()
@@ -39,7 +40,7 @@ def peak(signal: np.ndarray, threshold: float) -> np.ndarray:
     return F_in
 
 
-def filter_by_width(beat_array, lower, upper) -> np.ndarray:
+def filter_by_width(beat_array: np.ndarray, lower: float, upper: float) -> np.ndarray:
     """
     Filter beats by width.
     

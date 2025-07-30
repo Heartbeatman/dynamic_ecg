@@ -2,11 +2,12 @@
 import numpy as np
 from scipy import signal as si
 import time
+from typing import Callable, Any
 
 
-def timer_decorator(func):
+def timer_decorator(func: Callable[..., Any]) -> Callable[..., Any]:
     """Decorator to time function execution."""
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
         start_time = time.time()
         result = func(*args, **kwargs)
         end_time = time.time()
@@ -17,7 +18,7 @@ def timer_decorator(func):
 
 
 @timer_decorator
-def grad_square_conv(X, freq=125, sin_wave=False):
+def grad_square_conv(X: np.ndarray, freq: int = 125, sin_wave: bool = False) -> np.ndarray:
     """
     Transform the signal to find the peaks.
 
@@ -48,7 +49,7 @@ def grad_square_conv(X, freq=125, sin_wave=False):
     return window
 
 
-def phasor_transform(lead, rv):
+def phasor_transform(lead: np.ndarray, rv: float) -> np.ndarray:
     """
     Perform the phasor transform on the lead.
     

@@ -1,11 +1,15 @@
 """Apple Watch ECG data processing."""
 import pandas as pd
 import numpy as np
+from typing import Tuple
 
 
-def csv_to_numpy(file_path) -> tuple:
+def csv_to_numpy(file_path: str) -> Tuple[np.ndarray, float]:
     """
     Convert Apple Watch CSV file to numpy array.
+    
+    Args:
+        file_path: Path to the CSV file
     
     Returns:
         x: The ECG signal

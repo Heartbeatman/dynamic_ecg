@@ -3,7 +3,7 @@ import numpy as np
 from scipy.signal import butter, filtfilt
 
 
-def butter_highpass_filter(signal, fs):
+def butter_highpass_filter(signal: np.ndarray, fs: int) -> np.ndarray:
     """
     Filter the signal to remove baseline wander.
     
@@ -24,7 +24,7 @@ def butter_highpass_filter(signal, fs):
     return y
 
 
-def standardise(X):
+def standardise(X: np.ndarray) -> np.ndarray:
     """
     Scale the signal to zero mean and unit variance.
     

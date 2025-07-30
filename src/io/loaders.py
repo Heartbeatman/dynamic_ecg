@@ -4,9 +4,13 @@ import pandas as pd
 from pyedflib import highlevel
 import concurrent.futures
 from .apple_watch import csv_to_numpy
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ..core.ecg_data import ECGData
 
 
-def read_csv_data(ecg_data):
+def read_csv_data(ecg_data: 'ECGData') -> None:
     """
     Read ECG data from CSV file.
     Supports both Apple Watch single-lead and multi-channel Holter formats.
@@ -16,7 +20,7 @@ def read_csv_data(ecg_data):
     # Try to read as multi-channel CSV first
     try:
         df = pd.read_csv(ecg_data.file_path)
-        
+        b
         # Check if it's multi-channel format (has channel columns)
         if 'channel_1' in df.columns or 'channel_2' in df.columns or 'channel_3' in df.columns:
             # Multi-channel Holter CSV format
@@ -73,7 +77,7 @@ def read_csv_data(ecg_data):
         )
 
 
-def read_npz_data(ecg_data):
+def read_npz_data(ecg_data: 'ECGData') -> None:
     """Read ECG data from NPZ file."""
     from ..core.ecg_lead import ECGLead
     
@@ -85,12 +89,14 @@ def read_npz_data(ecg_data):
     ecg_data.lead_3 = ECGLead(signal=data['ecg_3'], fs=ecg_data.fs, units=ecg_data.units, lead=2)
 
 
-def read_edf_data(ecg_data):
+def read_edf_data(ecg_data: 'ECGData') -> None:
     """Read ECG data from EDF file."""
     from ..core.ecg_lead import ECGLead
     
     signals, signal_headers, header = highlevel.read_edf(ecg_data.file_path)
-    ecg_data.fs = signal_headers[0]['sample_rate']
+    # Check available keys
+    print(f"Signal header keys: {signal_headers[0].keys()}")
+    ecg_data.fs = signal_headers[0].get('sample_frequency', signal_headers[0].get('sample_rate'))
     ecg_data.units = signal_headers[0]['dimension']
     print(f'File: {ecg_data.file_path}')
 
