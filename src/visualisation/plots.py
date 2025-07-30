@@ -1,9 +1,13 @@
 """ECG visualisation functions."""
 import numpy as np
 import matplotlib.pyplot as plt
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ..core.ecg_lead import ECGLead
 
 
-def r_plotting(lead):
+def r_plotting(lead: 'ECGLead') -> None:
     """
     Plot the ECG signal and the R peaks.
     
@@ -21,7 +25,7 @@ def r_plotting(lead):
     plt.show()
 
 
-def p_plotting(lead):
+def p_plotting(lead: 'ECGLead') -> None:
     """
     Plot the ECG signal and the P peaks.
     
@@ -40,7 +44,7 @@ def p_plotting(lead):
     plt.show()
 
 
-def lorenz_plot(lead):
+def lorenz_plot(lead: 'ECGLead') -> None:
     """Plot the Lorenz plot of the RR intervals."""
     plt.clf()
     plt.figure(figsize=(10, 10))

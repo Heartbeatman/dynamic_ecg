@@ -1,8 +1,9 @@
 """ECG metrics and statistics calculations."""
 import numpy as np
+from typing import Dict
 
 
-def calculate_hrv_metrics(rr_intervals):
+def calculate_hrv_metrics(rr_intervals: np.ndarray) -> Dict[str, float]:
     """
     Calculate heart rate variability metrics.
     

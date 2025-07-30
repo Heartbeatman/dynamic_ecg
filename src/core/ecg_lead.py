@@ -30,7 +30,7 @@ class ECGLead:
     bpm: Optional[float] = None
     correlation_coefficient: Optional[float] = None
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Performs signal preprocessing and R wave detection on the ECG signal."""
         self._signal_preprocessing()
         self.r_wave_detector()
@@ -38,7 +38,7 @@ class ECGLead:
         self.calculate_rr_int()
         self.r_stats()
 
-    def _signal_preprocessing(self):
+    def _signal_preprocessing(self) -> None:
         """Performs signal preprocessing on the ECG signal."""
         if self.signal.shape[0] > 1e6:
             print('Signal too long, slicing to 5 minutes')
@@ -52,14 +52,14 @@ class ECGLead:
             self.signal = self.signal
 
     @timer_decorator
-    def threshold_calc(self, transformed_signal):
+    def threshold_calc(self, transformed_signal: np.ndarray) -> float:
         """Calculate the threshold for the R peak detector."""
         # Calculate the mean of the transformed signal
         transformed_signal = transformed_signal[(transformed_signal > 0.01) & (transformed_signal < 2)]
         return transformed_signal.mean() / 4
 
     @timer_decorator
-    def r_wave_detector(self):
+    def r_wave_detector(self) -> None:
         """Detect the R peaks of the signal."""
         # Window is the transformed signal
         self.window = transforms.grad_square_conv(self.signal, self.fs, sin_wave=False)
@@ -69,12 +69,12 @@ class ECGLead:
         self.r_peaks = detectors.peak(signal=self.window, threshold=self.threshold)
 
     @timer_decorator
-    def calculate_rr_int(self):
+    def calculate_rr_int(self) -> None:
         """Calculate the RR intervals from the R peak positions."""
         self.rr_int = np.diff(self.r_peaks[:, 0], prepend=0)
 
     @timer_decorator
-    def p_wave_detector(self):
+    def p_wave_detector(self) -> None:
         """Detect the P peaks of the signal."""
         # Phasor transform
         self.phasor = transforms.phasor_transform(self.signal, rv=0.001)
@@ -97,18 +97,18 @@ class ECGLead:
 
         self.p_peaks = np.delete(combined_peaks, refined_peaks_indices)
 
-    def r_plot(self):
+    def r_plot(self) -> None:
         """Plot the ECG signal and the R peaks."""
         plots.r_plotting(self)
         plots.lorenz_plot(self)
 
-    def r_stats(self):
+    def r_stats(self) -> None:
         """Calculate R wave statistics."""
         # Calculate Pearson's correlation coefficient
         self.correlation_coefficient = np.corrcoef(self.rr_int[:-1], self.rr_int[1:])[0, 1]
         # BPM calculation
         self.bpm = 2 * self.r_peaks[:, 0].shape[0]
 
-    def p_plot(self):
+    def p_plot(self) -> None:
         """Plot the ECG signal and the P peaks."""
         plots.p_plotting(self)

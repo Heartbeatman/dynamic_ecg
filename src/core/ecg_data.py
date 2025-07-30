@@ -18,11 +18,11 @@ class ECGData:
     lead_3: Optional[ECGLead] = None
     common_beats: Optional[np.ndarray] = None
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Reads the ECG data from the file."""
         self._read_data()
 
-    def _read_data(self):
+    def _read_data(self) -> None:
         """Reads the ECG data from the file based on extension."""
         if self.file_path.endswith('.npz'):
             self._read_npz_data()
@@ -31,14 +31,14 @@ class ECGData:
         elif self.file_path.endswith('.csv'):
             self._read_csv_data()
 
-    def _read_csv_data(self):
+    def _read_csv_data(self) -> None:
         """Reads ECG data from CSV file."""
         loaders.read_csv_data(self)
 
-    def _read_npz_data(self):
+    def _read_npz_data(self) -> None:
         """Reads ECG data from NPZ file."""
         loaders.read_npz_data(self)
 
-    def _read_edf_data(self):
+    def _read_edf_data(self) -> None:
         """Reads ECG data from EDF file."""
         loaders.read_edf_data(self)
