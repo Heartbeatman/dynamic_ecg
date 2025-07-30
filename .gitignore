@@ -1,0 +1,13 @@
+.venv/
+venv/
+CLAUDE.md
+.claude/
+.archive/
+.REFACTORING_TODO.md
+__pycache__/
+*.pyc
+.DS_Store
+
+# Large data files
+data/edf/*.edf
+data/csv/holter/full_ecg_data.csv

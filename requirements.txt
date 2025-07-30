@@ -1,0 +1,9 @@
+certifi==2025.7.14
+cffi==1.17.1
+cryptography==45.0.5
+numpy==2.2.4
+openvino==2025.0.0
+openvino-telemetry==2024.1.0
+packaging==24.1
+pycparser==2.22
+pyEDFlib

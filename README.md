@@ -1,6 +1,6 @@
 
 
-![alt text](image-3.png)
+![alt text](docs/images/readme/image-3.png)
 
 # Dynamic ECG
 
@@ -37,9 +37,9 @@ Execution time for p_wave_detector: 0.000247955322265625 seconds
 Execution time for calculate_rr_int: 2.3126602172851562e-05 seconds
 ```
 #### R plot
-![alt text](images/sample_r_plot.png)
+![alt text](docs/images/examples/sample_r_plot.png)
 #### Lorenz plot
-![alt text](images/sample_lorenz_plot.png)
+![alt text](docs/images/examples/sample_lorenz_plot.png)
 
 
 
