@@ -5,3 +5,7 @@ CLAUDE.md
 .archive/
 .REFACTORING_TODO.md
 __pycache__/
+
+# Large data files
+data/edf/*.edf
+data/csv/holter/full_ecg_data.csv
