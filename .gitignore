@@ -3,7 +3,7 @@ venv/
 CLAUDE.md
 .claude/
 .archive/
-.REFACTORING_TODO.md
+REFACTORING_TODO.md
 __pycache__/
 *.pyc
 .DS_Store
