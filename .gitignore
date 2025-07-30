@@ -4,3 +4,4 @@ CLAUDE.md
 .claude/
 .archive/
 .REFACTORING_TODO.md
+__pycache__/
