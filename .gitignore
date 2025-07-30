@@ -1,1 +1,6 @@
+.venv/
 venv/
+CLAUDE.md
+.claude/
+.archive/
+.REFACTORING_TODO.md
