@@ -1,6 +1,6 @@
 
 
-![alt text](docs/images/readme/image-3.png)
+![Dynamic ECG Processing Pipeline](images/complete_workflow_diagram.png)
 
 # Dynamic ECG
 
