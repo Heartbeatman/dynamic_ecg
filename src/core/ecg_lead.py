@@ -32,11 +32,11 @@ class ECGLead:
 
     def __post_init__(self) -> None:
         """Performs signal preprocessing and R wave detection on the ECG signal."""
-        self._signal_preprocessing()
-        self.r_wave_detector()
-        self.p_wave_detector()
-        self.calculate_rr_int()
-        self.r_stats()
+        #self._signal_preprocessing()
+        #self.r_wave_detector()
+        #self.p_wave_detector()
+        #self.calculate_rr_int()
+        #self.r_stats()
 
     def _signal_preprocessing(self) -> None:
         """Performs signal preprocessing on the ECG signal."""
