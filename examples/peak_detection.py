@@ -11,7 +11,7 @@ from src.core import ECGData
 from src.processing.transforms import grad_square_conv
 
 signal_data = ECGData(
-    file_path="../data/edf/9ef19ac2-a4f6-4c95-9aaf-c709ed7cd958-edf-20240112041135.edf"
+    file_path="../data/csv/holter/good_Dry_data.csv"
 )
 
 raw_signal = signal_data.lead_2.signal[120000:121000] / 2000
@@ -52,7 +52,7 @@ peak_index_t = points[peak_midpoint_indexes]
 
 wave_width = np.diff(peak_blocks[:, 0])
 
-
+phasor = np.arctan2((raw_signal),(0.0002))
 ##
 ## plotting
 plt.figure(figsize=(15, 10))
@@ -72,6 +72,7 @@ plt.scatter(
 )
 plt.plot(raw_signal, label=r"$\text{Lead II Raw}$", c="black")
 plt.plot(X, label=r"$\text{Transformed Signal}$", c="blue")
+plt.plot(phasor, label=r"$\text{Phasor Signal}$", c="green")
 plt.plot(
     np.arange(0, len(raw_signal), 1),
     threshold * np.ones(len(raw_signal)),
