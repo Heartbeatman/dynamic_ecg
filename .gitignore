@@ -10,6 +10,11 @@ __pycache__/
 
 .zed
 .ropeproject
-# Large data files
-data/edf/*.edf
-data/csv/holter/full_ecg_data.csv
+# Data files (keep examples only)
+data/*
+!data/examples/
+!data/README.md
+!data/APPLE_WATCH_EXPORT_GUIDE.md
+
+# Generated output
+output/
