@@ -7,7 +7,7 @@ REFACTORING_TODO.md
 __pycache__/
 *.pyc
 .DS_Store
-
+.vscode
 .zed
 .ropeproject
 # Data files (keep examples only)
