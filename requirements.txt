@@ -7,3 +7,5 @@ openvino-telemetry==2024.1.0
 packaging==24.1
 pycparser==2.22
 pyEDFlib
+wfdb>=4.0.0
+numba>=0.60.0

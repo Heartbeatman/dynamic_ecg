@@ -99,13 +99,12 @@ class ECGLead:
         self.threshold = self.threshold_calc(self.phasor)
         # Perform the peak detection on this transformed signal
         self.p_peaks = detectors.peak(signal=self.phasor, threshold=self.threshold)
-        
         # Combine and sort R peaks and P peaks
         combined_peaks = np.sort(np.concatenate((self.r_peaks[:, 0], self.p_peaks[:, 0])))
 
         # Identify unique peaks that are close to each other
         close_peaks_indices = np.where(np.diff(combined_peaks) < 10)[0]
-
+        
         # Create an array of indices to add to the close peaks
         additional_indices = close_peaks_indices + 1
 
