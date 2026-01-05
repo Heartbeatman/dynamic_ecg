@@ -13,7 +13,7 @@ def classify_peaks_numba(
     npki: float,
     fs: int,
     refractory_samples: int
-) -> np.ndarray:
+) -> tuple:
     """
     Numba-optimised peak classification.
 
@@ -28,7 +28,7 @@ def classify_peaks_numba(
         refractory_samples: Refractory period in samples
 
     Returns:
-        Array of detected peaks with columns [peak_index, width]
+        Tuple of (peaks_array, final_spki, final_npki)
     """
     # Pre-allocate output array (max possible size)
     max_peaks = len(valid_indices) * 2  # Account for search-back additions
@@ -96,4 +96,61 @@ def classify_peaks_numba(
         else:
             npki = 0.125 * amplitude + 0.875 * npki
 
-    return refined_peaks[:count]
+    return refined_peaks[:count], spki, npki
+
+
+@jit(nopython=True, cache=True, fastmath=True)
+def reprocess_training_period(
+    peak_indices: np.ndarray,
+    widths: np.ndarray,
+    amplitudes: np.ndarray,
+    spki: float,
+    npki: float,
+    training_samples: int,
+    refractory_samples: int
+) -> np.ndarray:
+    """
+    Reprocess the training period using calibrated thresholds.
+
+    Args:
+        peak_indices: Array of candidate peak indices
+        widths: Array of candidate widths
+        amplitudes: Array of candidate amplitudes
+        spki: Calibrated signal peak estimate
+        npki: Calibrated noise peak estimate
+        training_samples: Number of samples in training period
+        refractory_samples: Refractory period in samples
+
+    Returns:
+        Array of detected peaks in training period
+    """
+    threshold = npki + 0.25 * (spki - npki)
+
+    # Pre-allocate output
+    max_peaks = 50  # Training period is short, won't have many peaks
+    peaks = np.empty((max_peaks, 2), dtype=np.float64)
+    count = 0
+    last_peak_idx = -refractory_samples
+
+    for i in range(len(peak_indices)):
+        peak_idx = peak_indices[i]
+
+        # Only process peaks in training period
+        if peak_idx >= training_samples:
+            break
+
+        amplitude = amplitudes[i]
+        width = widths[i]
+
+        # Check refractory period
+        if peak_idx - last_peak_idx < refractory_samples:
+            continue
+
+        # Use calibrated threshold
+        if amplitude > threshold:
+            peaks[count, 0] = peak_idx
+            peaks[count, 1] = width
+            count += 1
+            last_peak_idx = peak_idx
+
+    return peaks[:count]

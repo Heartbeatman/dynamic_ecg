@@ -18,3 +18,4 @@ data/*
 
 # Generated output
 output/
+failures_*/

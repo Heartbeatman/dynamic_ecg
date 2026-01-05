@@ -3,7 +3,7 @@ import numpy as np
 import time
 from typing import Callable, Any, Tuple, List
 
-from .optimised import classify_peaks_numba
+from .optimised import classify_peaks_numba, reprocess_training_period
 
 
 def timer_decorator(func: Callable[..., Any]) -> Callable[..., Any]:
@@ -139,7 +139,7 @@ def init_thresholds_from_training(
     return spki, npki
 
 
-def get_candidate_peaks(signal: np.ndarray, percentile: float = 70.0) -> np.ndarray:
+def get_candidate_peaks(signal: np.ndarray, percentile: float = 60.0) -> np.ndarray:
     """
     Get all candidate peaks using a low threshold.
 
@@ -196,7 +196,7 @@ def classify_peaks(
     spki: float,
     npki: float,
     fs: int
-) -> np.ndarray:
+) -> Tuple[np.ndarray, float, float]:
     """
     Classify candidate peaks as signal or noise using adaptive thresholding.
 
@@ -208,7 +208,7 @@ def classify_peaks(
         fs: Sampling frequency
 
     Returns:
-        Array of detected peaks with columns [peak_index, width]
+        Tuple of (peaks_array, final_spki, final_npki)
     """
     refractory_samples = int(0.15 * fs)
 
@@ -234,11 +234,11 @@ def classify_peaks(
 @timer_decorator
 def adaptive_peak_detect(signal: np.ndarray, fs: int) -> np.ndarray:
     """
-    Pan-Tompkins adaptive threshold peak detection.
+    Pan-Tompkins adaptive threshold peak detection with two-pass approach.
 
     Uses a training phase to learn initial thresholds, then applies adaptive
-    thresholding. Dynamically adjusts threshold based on signal and noise
-    peak estimates.
+    thresholding. After the first pass, reprocesses the training period using
+    calibrated thresholds to catch initially missed beats.
 
     Args:
         signal: Transformed signal (after bandpass, derivative, squaring, integration)
@@ -249,22 +249,45 @@ def adaptive_peak_detect(signal: np.ndarray, fs: int) -> np.ndarray:
     """
     # Initialise thresholds from training phase
     spki, npki = init_thresholds_from_training(signal, fs)
+    training_samples = int(2 * fs)
+    refractory_samples = int(0.15 * fs)
 
     # Get all candidate peaks
     candidates = get_candidate_peaks(signal)
     if len(candidates) == 0:
         return np.array([]).reshape(0, 2)
 
-    # Classify peaks using adaptive thresholding
-    refined_peaks = classify_peaks(signal, candidates, spki, npki, fs)
+    # First pass: classify peaks using adaptive thresholding
+    refined_peaks, final_spki, final_npki = classify_peaks(signal, candidates, spki, npki, fs)
 
     if len(refined_peaks) == 0:
         return np.array([]).reshape(0, 2)
 
-    # Sort peaks by index (search-back may add out of order)
-    refined_peaks = sorted(refined_peaks, key=lambda x: x[0])
+    # Second pass: reprocess training period with calibrated thresholds
+    peak_indices = candidates[:, 0].astype(np.int64)
+    widths = candidates[:, 1].astype(np.float64)
+    amplitudes = signal[peak_indices]
 
-    return np.array(refined_peaks)
+    training_peaks = reprocess_training_period(
+        peak_indices, widths, amplitudes,
+        final_spki, final_npki,
+        training_samples, refractory_samples
+    )
+
+    # Merge results: combine training peaks with main peaks (excluding duplicates)
+    if len(training_peaks) > 0:
+        # Remove any peaks from refined_peaks that are in training period
+        # (they will be replaced by the reprocessed ones)
+        main_peaks = refined_peaks[refined_peaks[:, 0] >= training_samples]
+        all_peaks = np.vstack([training_peaks, main_peaks]) if len(main_peaks) > 0 else training_peaks
+    else:
+        all_peaks = refined_peaks
+
+    # Sort peaks by index
+    sorted_indices = np.argsort(all_peaks[:, 0])
+    all_peaks = all_peaks[sorted_indices]
+
+    return all_peaks
 
 
 def filter_by_width(beat_array: np.ndarray, lower: float, upper: float) -> np.ndarray:
