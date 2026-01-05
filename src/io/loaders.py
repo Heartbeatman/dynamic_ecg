@@ -10,28 +10,51 @@ if TYPE_CHECKING:
     from ..core.ecg_data import ECGData
 
 
+def _read_csv_metadata(file_path: str) -> dict:
+    """Read metadata from CSV comment header lines."""
+    meta = {}
+    with open(file_path, 'r') as f:
+        for line in f:
+            line = line.strip()
+            if not line.startswith('#'):
+                break
+            content = line[1:].strip()
+            if ':' in content:
+                key, value = content.split(':', 1)
+                meta[key.strip()] = value.strip()
+    return meta
+
+
 def read_csv_data(ecg_data: 'ECGData') -> None:
     """
     Read ECG data from CSV file.
     Supports both Apple Watch single-lead and multi-channel Holter formats.
+    Handles metadata comment lines starting with #.
     """
     from ..core.ecg_lead import ECGLead
-    
+
+    # Read metadata from comment header
+    metadata = _read_csv_metadata(ecg_data.file_path)
+
     # Try to read as multi-channel CSV first
     try:
-        df = pd.read_csv(ecg_data.file_path)
-        b
+        # Skip comment lines when reading CSV
+        df = pd.read_csv(ecg_data.file_path, comment='#')
+
         # Check if it's multi-channel format (has channel columns)
         if 'channel_1' in df.columns or 'channel_2' in df.columns or 'channel_3' in df.columns:
             # Multi-channel Holter CSV format
-            ecg_data.fs = 180  # Default sampling rate for Holter data
-            
-            # Check if time_seconds column exists to calculate fs
-            if 'time_seconds' in df.columns and len(df) > 1:
-                ecg_data.fs = int(1 / (df['time_seconds'][1] - df['time_seconds'][0]))
-            
-            ecg_data.units = 'uV'
-            
+            # Use metadata sample_rate if available, else calculate from time column
+            if 'sample_rate' in metadata:
+                ecg_data.fs = int(metadata['sample_rate'])
+            elif 'time_seconds' in df.columns and len(df) > 1:
+                ecg_data.fs = int(round(1 / (df['time_seconds'][1] - df['time_seconds'][0])))
+            else:
+                ecg_data.fs = 200  # Default sampling rate
+
+            # Use metadata units if available
+            ecg_data.units = metadata.get('units', 'uV')
+
             if 'channel_1' in df.columns:
                 ecg_data.lead_1 = ECGLead(
                     signal=df['channel_1'].values.astype(np.float64),

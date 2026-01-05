@@ -3,6 +3,29 @@ import numpy as np
 from scipy.signal import butter, filtfilt
 
 
+def butter_bandpass_filter(
+    signal: np.ndarray, fs: int, lowcut: float = 5.0, highcut: float = 15.0, order: int = 2
+) -> np.ndarray:
+    """
+    Bandpass filter to isolate QRS complex frequencies (5-15 Hz).
+
+    Args:
+        signal: The signal to filter
+        fs: Sampling frequency
+        lowcut: Low cutoff frequency (Hz)
+        highcut: High cutoff frequency (Hz)
+        order: Filter order
+
+    Returns:
+        Filtered signal
+    """
+    nyq = 0.5 * fs
+    low = lowcut / nyq
+    high = highcut / nyq
+    b, a = butter(order, [low, high], btype='band', analog=False)
+    return filtfilt(b, a, signal)
+
+
 def butter_highpass_filter(signal: np.ndarray, fs: int) -> np.ndarray:
     """
     Filter the signal to remove baseline wander.

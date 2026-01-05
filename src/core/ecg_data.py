@@ -2,7 +2,6 @@
 from dataclasses import dataclass
 from typing import Optional
 import numpy as np
-import concurrent.futures
 from .ecg_lead import ECGLead
 from ..io import loaders
 
