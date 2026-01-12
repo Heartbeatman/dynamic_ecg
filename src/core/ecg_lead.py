@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import Optional
 import numpy as np
 from ..processing import detectors, transforms, filters
-from ..processing.transforms import timer_decorator
+from ..processing.utils import timer_decorator
 from ..visualisation import plots
 
 
