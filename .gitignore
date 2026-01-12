@@ -1,22 +1,147 @@
+# =============================================================================
+# Dynamic ECG - Git Ignore Configuration
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Python
+# -----------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
 .venv/
 venv/
-CLAUDE.md
-.claude/
-.archive/
-REFACTORING_TODO.md
-__pycache__/
-*.pyc
+ENV/
+env/
+
+# Type checking / Linting
+.mypy_cache/
+.ruff_cache/
+.pytype/
+.pyre/
+
+# Testing
+.tox/
+.nox/
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+nosetests.xml
+coverage.xml
+*.cover
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+
+# -----------------------------------------------------------------------------
+# Data Files - IMPORTANT: Do not commit patient/health data!
+# -----------------------------------------------------------------------------
+*.csv
+*.edf
+*.npz
+*.npy
+*.pkl
+*.pickle
+*.h5
+*.hdf5
+data/
+
+# -----------------------------------------------------------------------------
+# Generated Output
+# -----------------------------------------------------------------------------
+output/
+failures_*/
+logs/
+*.log
+
+# Images (generated plots)
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.pdf
+
+# -----------------------------------------------------------------------------
+# IDE / Editor
+# -----------------------------------------------------------------------------
+.vscode/
+.zed/
+.idea/
+*.swp
+*.swo
+*~
+.ropeproject/
+.spyderproject
+.spyproject
+
+# -----------------------------------------------------------------------------
+# Operating System
+# -----------------------------------------------------------------------------
 .DS_Store
-.vscode
-.zed
-.ropeproject
-# Data files (keep examples only)
-data/*
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# -----------------------------------------------------------------------------
+# Project Specific
+# -----------------------------------------------------------------------------
+.archive/
+.claude/
+CLAUDE.md
+REFACTORING_TODO.md
+
+# -----------------------------------------------------------------------------
+# Generated Documentation
+# -----------------------------------------------------------------------------
+# HTML documentation (generated from markdown)
+docs/*.html
+
+# Generated markdown docs (keep VALIDATION_REPORT.md manually)
+docs/r_peak_detection.md
+
+# -----------------------------------------------------------------------------
+# Validation Scripts (internal testing, not for distribution)
+# -----------------------------------------------------------------------------
+examples/validate_*.py
+scripts/
+
+# -----------------------------------------------------------------------------
+# Exceptions - Files to KEEP in repo
+# -----------------------------------------------------------------------------
+# Keep example data for testing
 !data/examples/
+!data/examples/**
 !data/README.md
 !data/APPLE_WATCH_EXPORT_GUIDE.md
 
-# Generated output
-output/
-failures_*/
-*.png
+# Keep documentation images
+!docs/images/
+!docs/images/**
+
+# Keep README workflow diagram
+!images/complete_workflow_diagram.png
+
+.mcp.json
