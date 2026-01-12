@@ -123,10 +123,10 @@ docs/*.html
 docs/r_peak_detection.md
 
 # -----------------------------------------------------------------------------
-# Validation Scripts (internal testing, not for distribution)
+# Internal Scripts (validation, testing, plotting - not for distribution)
 # -----------------------------------------------------------------------------
-examples/validate_*.py
-scripts/
+examples/internal/
+/scripts/
 
 # -----------------------------------------------------------------------------
 # Exceptions - Files to KEEP in repo
