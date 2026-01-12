@@ -8,7 +8,7 @@ This report presents validation results for R-peak (QRS) and P-wave detection al
 
 | Algorithm | Database | Records | Total Beats | Sensitivity | PPV | F1 Score |
 |-----------|----------|---------|-------------|-------------|-----|----------|
-| R-peak (QRS) | MIT-BIH Arrhythmia | 48 | 109,494 | **93.09%** | **99.86%** | **0.9635** |
+| R-peak (QRS) | MIT-BIH Arrhythmia | 48 | 109,494 | **97.01%** | **99.83%** | **0.9840** |
 | P-wave | QT Database | 105 | 95,196 | 82.83% | 70.86% | 0.7638 |
 | P-wave (fully annotated only) | QT Database | ~50 | ~50,000 | ~98% | ~97% | ~0.97 |
 
@@ -47,13 +47,13 @@ This report presents validation results for R-peak (QRS) and P-wave detection al
 | Metric | Value |
 |--------|-------|
 | **Total Ground Truth Beats** | **109,494** |
-| Total True Positives | 101,927 |
-| Total False Positives | 146 |
-| Total False Negatives | 7,567 |
-| **Gross Sensitivity** | **93.09%** |
-| **Gross Positive Predictivity** | **99.86%** |
-| **Gross F1 Score** | **0.9635** |
-| Average Detection Error Rate | 6.54% |
+| Total True Positives | 106,219 |
+| Total False Positives | 180 |
+| Total False Negatives | 3,275 |
+| **Gross Sensitivity** | **97.01%** |
+| **Gross Positive Predictivity** | **99.83%** |
+| **Gross F1 Score** | **0.9840** |
+| Average Detection Error Rate | 3.28% |
 
 ### Per-Record Performance
 
@@ -67,27 +67,76 @@ This report presents validation results for R-peak (QRS) and P-wave detection al
 | 122 | 99.76% | 100.00% | 0.9988 | Normal sinus rhythm |
 | 234 | 99.73% | 100.00% | 0.9986 | Normal sinus rhythm |
 
-#### Challenging Records (Sensitivity < 80%)
+#### Challenging Records (Sensitivity < 90%)
 
 | Record | Sensitivity | PPV | F1 Score | Reason for Lower Performance |
 |--------|-------------|-----|----------|------------------------------|
-| 228 | 47.35% | 99.85% | 0.6420 | Significant ventricular arrhythmias |
-| 114 | 67.64% | 99.78% | 0.8062 | Atrial fibrillation, irregular rhythm |
-| 215 | 74.96% | 99.91% | 0.8568 | Ventricular ectopy |
-| 203 | 75.97% | 99.67% | 0.8622 | Multiform PVCs |
-| 208 | 76.04% | 99.90% | 0.8636 | Ventricular bigeminy |
+| 228 | 62.9% | 99.77% | 0.7724 | Significant ventricular arrhythmias (362 PVCs) |
+| 114 | 73.8% | 99.64% | 0.8477 | Atrial fibrillation, irregular rhythm |
+| 201 | 86.0% | 99.29% | 0.9216 | Ventricular ectopy |
+| 203 | 88.2% | 99.73% | 0.9361 | Multiform PVCs |
+
+### Performance by Beat Type
+
+The MIT-BIH database includes expert annotations for different beat morphologies. The following table shows detection sensitivity broken down by beat type:
+
+#### By Individual Beat Type
+
+| Symbol | Beat Type | Total Beats | TP | FN | Sensitivity |
+|--------|-----------|-------------|----|----|-------------|
+| N | Normal | 75,052 | 73,023 | 2,029 | 97.30% |
+| L | Left bundle branch block | 8,075 | 8,040 | 35 | 99.57% |
+| R | Right bundle branch block | 7,259 | 7,234 | 25 | 99.66% |
+| V | Premature ventricular contraction | 7,130 | 6,304 | 826 | **88.42%** |
+| / | Paced beat | 7,028 | 7,004 | 24 | 99.66% |
+| A | Atrial premature beat | 2,546 | 2,385 | 161 | 93.68% |
+| f | Fusion of paced and normal | 982 | 924 | 58 | 94.09% |
+| F | Fusion (ventricular and normal) | 803 | 785 | 18 | 97.76% |
+| j | Junctional escape beat | 229 | 227 | 2 | 99.13% |
+| a | Aberrated atrial premature beat | 150 | 61 | 89 | **40.67%** |
+| E | Ventricular escape beat | 106 | 105 | 1 | 99.06% |
+| J | Junctional premature beat | 83 | 81 | 2 | 97.59% |
+| Q | Unclassifiable beat | 33 | 28 | 5 | 84.85% |
+| e | Atrial escape beat | 16 | 16 | 0 | 100.00% |
+| S | Supraventricular premature beat | 2 | 2 | 0 | 100.00% |
+
+#### By Clinical Category
+
+| Category | Total Beats | TP | FN | Sensitivity |
+|----------|-------------|----|----|-------------|
+| Normal | 75,052 | 73,023 | 2,029 | 97.30% |
+| Bundle Branch Block (L, R, B) | 15,334 | 15,274 | 60 | **99.61%** |
+| Paced (/) | 7,028 | 7,004 | 24 | **99.66%** |
+| Escape (e, j, n, E) | 351 | 348 | 3 | 99.15% |
+| Fusion (F, f) | 1,785 | 1,709 | 76 | 95.74% |
+| Supraventricular (A, a, J, S) | 2,781 | 2,529 | 252 | 90.94% |
+| Ventricular (V, r) | 7,130 | 6,304 | 826 | **88.42%** |
+| Unknown (Q, ?) | 33 | 28 | 5 | 84.85% |
+
+#### Key Observations
+
+1. **Excellent performance on conduction abnormalities**: Bundle branch blocks (99.6%) and paced beats (99.7%) are detected very reliably despite their altered QRS morphology.
+
+2. **PVCs are the primary weakness**: Ventricular ectopic beats account for 826 of 3,275 total false negatives (25%). Their different morphology (wider, often lower amplitude) can fall below the adaptive threshold.
+
+3. **Aberrated APBs are problematic**: Only 40.67% sensitivity, though the sample size is small (150 beats). These beats have abnormal morphology but arise from atrial ectopy.
+
+4. **Clinical implication**: For applications requiring reliable arrhythmia detection, a morphology-aware second pass specifically for ventricular ectopy may be beneficial.
 
 ### Analysis
 
 **Strengths**:
-- Excellent positive predictivity (99.86%) - very few false alarms
-- Robust performance on normal sinus rhythm records
+- Excellent positive predictivity (99.83%) - very few false alarms
+- Strong overall sensitivity (97.01%) across diverse rhythm types
+- Outstanding performance on bundle branch blocks and paced rhythms (>99.5%)
 - Two-pass detection recovers beats missed during training period
+- Robust performance on normal sinus rhythm records
 
 **Limitations**:
-- Lower sensitivity on records with significant arrhythmias
-- Ventricular ectopic beats often have different morphology (lower amplitude, wider QRS) that falls below adaptive threshold
-- Algorithm optimised for normal QRS morphology
+- Lower sensitivity on ventricular ectopic beats (88.42% for PVCs)
+- Aberrated atrial premature beats are poorly detected (40.67%)
+- Records with significant arrhythmias (228, 114) show reduced performance
+- Algorithm optimised for regular QRS morphology
 
 ---
 
@@ -202,9 +251,9 @@ For records where P-wave count equals R-peak count (fully annotated):
 |-------|----------|-------------|-----|
 | Pan & Tompkins (1985) | MIT-BIH | 99.3% | - |
 | Hamilton & Tompkins (1986) | MIT-BIH | 99.69% | 99.77% |
-| **This Implementation** | MIT-BIH | **93.09%** | **99.86%** |
+| **This Implementation** | MIT-BIH | **97.01%** | **99.83%** |
 
-Note: Our implementation prioritises low false positive rate (high PPV) which is critical for clinical applications. The lower sensitivity is primarily due to challenging arrhythmia records.
+Note: Our implementation achieves competitive performance with very low false positive rate. The remaining sensitivity gap versus classic implementations is primarily due to ventricular ectopic beats (88.42% sensitivity on PVCs).
 
 ### P-Wave Detection
 
@@ -241,4 +290,7 @@ Note: Our implementation prioritises low false positive rate (high PPV) which is
 ---
 
 *Report generated: January 2025*
+*Last updated: January 2026*
 *Algorithm version: MIT-validation branch*
+*Validation script: examples/validate_mitbih.py*
+*Beat-type analysis: examples/validate_beat_types.py*

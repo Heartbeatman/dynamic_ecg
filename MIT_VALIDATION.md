@@ -55,23 +55,29 @@ Each recording has three files:
 ## Validation Results
 
 **Aggregate Results (48 records)**:
-- Total TP: 101,927 | FP: 146 | FN: 7,567
-- Gross Sensitivity: 93.09%
-- Gross Positive Predictivity: 99.86%
-- Gross F1 Score: 0.9635
-- Average Detection Error Rate: 6.54%
+- Total TP: 106,219 | FP: 180 | FN: 3,275
+- Gross Sensitivity: 97.01%
+- Gross Positive Predictivity: 99.83%
+- Gross F1 Score: 0.9840
+- Average Detection Error Rate: 3.28%
 
 **Best Performing Records**:
-- Record 113: Se 99.89%, +P 100.00%, F1 0.9994
-- Record 230: Se 99.82%, +P 100.00%, F1 0.9991
-- Record 117: Se 99.80%, +P 100.00%, F1 0.9990
+- Record 122: Se 100.0%, +P 100.00%, F1 1.0000
+- Record 115: Se 99.90%, +P 100.00%, F1 0.9995
+- Record 103: Se 99.86%, +P 100.00%, F1 0.9993
 
-**Challenging Records** (lower sensitivity due to arrhythmias/noise):
-- Record 228: Se 47.35% (significant arrhythmias)
-- Record 114: Se 67.64%
-- Record 215: Se 74.96%
-- Record 203: Se 75.97%
-- Record 208: Se 76.04%
+**Challenging Records** (lower sensitivity due to arrhythmias):
+- Record 228: Se 62.9% (362 PVCs)
+- Record 114: Se 73.8% (atrial fibrillation)
+- Record 201: Se 86.0% (ventricular ectopy)
+- Record 203: Se 88.2% (multiform PVCs)
+
+**Performance by Beat Type**:
+- Normal (N): 97.30% sensitivity (75,052 beats)
+- Bundle Branch Block (L, R): 99.6% sensitivity (15,334 beats)
+- Paced (/): 99.66% sensitivity (7,028 beats)
+- PVC (V): 88.42% sensitivity (7,130 beats) - main weakness
+- APB (A): 93.68% sensitivity (2,546 beats)
 
 ## Notes
 
